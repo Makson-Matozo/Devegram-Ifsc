@@ -117,7 +117,7 @@ export default function Comentarios({ route }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.titulo}>💬 Comentários da Foto #{fotoId}</Text>
+            <Text style={styles.titulo}> Comentários da Foto #{fotoId}</Text>
 
             <FlatList
                 data={comentarios}
