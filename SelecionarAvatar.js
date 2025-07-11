@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     View,
     Text,
@@ -38,8 +38,10 @@ export default function SelecionarAvatar() {
         if (!user) return;
 
         try {
+            const avatarUri = Image.resolveAssetSource(imagemSelecionada).uri;
+
             await setDoc(doc(db, 'usuarios', user.uid), {
-                avatar: Image.resolveAssetSource(imagemSelecionada).uri,
+                avatar: avatarUri,
             }, { merge: true });
 
             navigation.goBack();
@@ -47,6 +49,8 @@ export default function SelecionarAvatar() {
             console.error('Erro ao salvar avatar:', error);
         }
     };
+
+    const avataresDaCategoria = useMemo(() => avatares[categoriaAtiva] || [], [categoriaAtiva]);
 
     return (
         <ScrollView style={styles.container}>
@@ -61,14 +65,19 @@ export default function SelecionarAvatar() {
                         ]}
                         onPress={() => setCategoriaAtiva(categoria)}
                     >
-                        <Text style={styles.textoCategoria}>{categoria}</Text>
+                        <Text style={[
+                            styles.textoCategoria,
+                            categoria === categoriaAtiva && styles.textoCategoriaAtiva
+                        ]}>
+                            {categoria}
+                        </Text>
                     </TouchableOpacity>
                 ))}
             </View>
 
             <Text style={styles.subtitulo}>Escolha seu avatar:</Text>
             <View style={styles.listaAvatares}>
-                {avatares[categoriaAtiva].map((imagem, index) => (
+                {avataresDaCategoria.map((imagem, index) => (
                     <TouchableOpacity key={index} onPress={() => salvarAvatar(imagem)}>
                         <Image source={imagem} style={styles.avatar} />
                     </TouchableOpacity>
@@ -80,13 +89,15 @@ export default function SelecionarAvatar() {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         padding: 20,
-        backgroundColor: '#fff',
+        backgroundColor: '#f8f9fa',
     },
     titulo: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: 12,
+        color: '#212529',
     },
     categorias: {
         flexDirection: 'row',
@@ -94,9 +105,10 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     botaoCategoria: {
-        backgroundColor: '#eee',
-        padding: 10,
-        borderRadius: 8,
+        backgroundColor: '#e9ecef',
+        paddingVertical: 8,
+        paddingHorizontal: 14,
+        borderRadius: 20,
         marginRight: 10,
         marginBottom: 10,
     },
@@ -104,12 +116,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#6f42c1',
     },
     textoCategoria: {
-        color: '#333',
+        fontSize: 15,
+        color: '#495057',
+    },
+    textoCategoriaAtiva: {
+        color: '#fff',
+        fontWeight: 'bold',
     },
     subtitulo: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: 15,
+        color: '#343a40',
     },
     listaAvatares: {
         flexDirection: 'row',
@@ -120,6 +138,14 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
-        marginBottom: 15,
+        marginBottom: 20,
+        borderWidth: 2,
+        borderColor: '#dee2e6',
+        backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
+        elevation: 3,
     },
 });

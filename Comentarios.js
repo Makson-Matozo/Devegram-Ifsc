@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     View,
     Text,
@@ -6,8 +6,6 @@ import {
     FlatList,
     TouchableOpacity,
     StyleSheet,
-    KeyboardAvoidingView,
-    Platform,
     Modal,
 } from 'react-native';
 import {
@@ -22,6 +20,7 @@ import {
 } from 'firebase/firestore';
 import { db, auth } from './Firebase';
 import { FontAwesome } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function Comentarios({ route }) {
     const { fotoId } = route.params || {};
@@ -32,7 +31,12 @@ export default function Comentarios({ route }) {
     const [comentarioSelecionado, setComentarioSelecionado] = useState(null);
     const [textoComentarioEditado, setTextoComentarioEditado] = useState('');
 
-    // 📡 Carregar comentários em tempo real
+    useFocusEffect(
+        useCallback(() => {
+            setMenuAbertoId(null);
+        }, [])
+    );
+
     useEffect(() => {
         if (!fotoId) return;
 
@@ -53,7 +57,6 @@ export default function Comentarios({ route }) {
         return unsubscribe;
     }, [fotoId]);
 
-    // ➕ Adicionar comentário
     const adicionarComentario = async () => {
         const user = auth.currentUser;
         if (!comentarioTexto.trim() || !user || !fotoId) return;
@@ -71,7 +74,6 @@ export default function Comentarios({ route }) {
         }
     };
 
-    // ✏️ Iniciar edição
     const iniciarEdicao = (comentario) => {
         setComentarioSelecionado(comentario);
         setTextoComentarioEditado(comentario.texto);
@@ -79,7 +81,6 @@ export default function Comentarios({ route }) {
         setMenuAbertoId(null);
     };
 
-    // 💾 Salvar edição
     const salvarEdicao = async () => {
         if (!comentarioSelecionado || !textoComentarioEditado.trim()) return;
 
@@ -97,7 +98,6 @@ export default function Comentarios({ route }) {
         }
     };
 
-    // 🗑️ Deletar comentário
     const deletarComentario = async (id) => {
         try {
             await deleteDoc(doc(db, 'images', String(fotoId), 'comments', id));
@@ -116,16 +116,13 @@ export default function Comentarios({ route }) {
     }
 
     return (
-        <View
-            style={styles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={80}
-        >
+        <View style={styles.container}>
             <Text style={styles.titulo}>💬 Comentários da Foto #{fotoId}</Text>
 
             <FlatList
                 data={comentarios}
                 keyExtractor={(item) => item.id}
+                extraData={menuAbertoId}
                 renderItem={({ item }) => (
                     <View style={styles.comentarioContainer}>
                         <View style={styles.comentarioTopo}>
@@ -213,60 +210,110 @@ export default function Comentarios({ route }) {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 16, paddingTop: 20 },
-    titulo: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
-    comentarioContainer: {
-        paddingVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-        position: 'relative',
+    container: {
+        flex: 1,
+        backgroundColor: '#0D0D0D',
+        paddingHorizontal: 16,
+        paddingTop: 20,
     },
-    comentarioTopo: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    comentarioTexto: { fontSize: 16, color: '#333', flex: 1, paddingRight: 10 },
-    menuButton: { paddingHorizontal: 8, paddingVertical: 4 },
+    titulo: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#00CFFF',
+        marginBottom: 15,
+    },
+    comentarioContainer: {
+        position: 'relative', // ESSENCIAL
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        backgroundColor: '#1C1F39',
+        borderRadius: 12,
+        marginBottom: 10,
+        shadowColor: '#000',
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 3,
+        borderWidth: 1,
+        borderColor: '#2D2D3A',
+    },
+    comentarioTopo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    comentarioTexto: {
+        fontSize: 16,
+        color: '#87AAFF',
+        flex: 1,
+        paddingRight: 10,
+    },
+    menuButton: {
+        padding: 6,
+    },
     menuComentario: {
         position: 'absolute',
-        right: 10,
-        top: 35,
-        backgroundColor: '#fff',
-        borderColor: '#ccc',
+        right: 0,
+        top: 30,
+        backgroundColor: '#1C1F39',
+        borderColor: '#00CFFF',
         borderWidth: 1,
         borderRadius: 6,
         paddingVertical: 8,
         paddingHorizontal: 12,
         zIndex: 10,
+        elevation: 20,
         shadowColor: '#000',
-        shadowOpacity: 0.1,
+        shadowOpacity: 0.2,
         shadowRadius: 10,
-        elevation: 5,
     },
-    menuOption: { paddingVertical: 6 },
-    menuTexto: { fontSize: 16 },
-    semComentarios: { textAlign: 'center', color: '#777', marginTop: 40, fontStyle: 'italic' },
+    menuOption: {
+        paddingVertical: 6,
+    },
+    menuTexto: {
+        fontSize: 16,
+        color: '#87AAFF',
+    },
+    semComentarios: {
+        textAlign: 'center',
+        color: '#aaa',
+        marginTop: 40,
+        fontStyle: 'italic',
+    },
     areaComentario: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 12,
         borderTopWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#2D2D3A',
+        backgroundColor: '#0D0D0D',
     },
     input: {
         flex: 1,
-        backgroundColor: '#f1f1f1',
+        backgroundColor: '#1C1F39',
         borderRadius: 8,
         paddingHorizontal: 12,
         paddingVertical: 8,
         fontSize: 15,
         marginRight: 10,
+        color: '#87AAFF',
+        borderWidth: 1,
+        borderColor: '#2D2D3A',
     },
     botao: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#00CFFF',
         paddingVertical: 10,
         paddingHorizontal: 16,
         borderRadius: 8,
     },
-    botaoDesativado: { backgroundColor: '#a0c4ff' },
-    botaoTexto: { color: '#fff', fontWeight: 'bold' },
+    botaoDesativado: {
+        backgroundColor: '#1C1F39',
+        borderWidth: 1,
+        borderColor: '#444',
+    },
+    botaoTexto: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
     modalOverlay: {
         flex: 1,
         justifyContent: 'center',
@@ -274,24 +321,38 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.5)',
     },
     modalContainer: {
-        backgroundColor: '#fff',
+        backgroundColor: '#1C1F39',
         padding: 20,
-        borderRadius: 10,
+        borderRadius: 12,
         width: '90%',
         maxWidth: 400,
+        elevation: 5,
+        borderWidth: 1,
+        borderColor: '#00CFFF',
     },
-    modalTitulo: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
+    modalTitulo: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#00CFFF',
+        marginBottom: 15,
+        textAlign: 'center',
+    },
     modalInput: {
         height: 100,
-        borderColor: '#ccc',
+        borderColor: '#2D2D3A',
         borderWidth: 1,
         borderRadius: 8,
         paddingHorizontal: 10,
         textAlignVertical: 'top',
         fontSize: 16,
         marginBottom: 15,
+        backgroundColor: '#0D0D0D',
+        color: '#87AAFF',
     },
-    modalBotoes: { flexDirection: 'row', justifyContent: 'space-between' },
+    modalBotoes: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
     botaoModal: {
         flex: 1,
         padding: 10,

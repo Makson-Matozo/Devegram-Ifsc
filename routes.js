@@ -24,17 +24,27 @@ import SpaceScreen from './SpaceScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-//  Pilha da Home
+// Pilha da Home com header estilizado
 function HomeStack() {
     return (
-        <Stack.Navigator>
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#1a2144', // azul escuro
+                    shadowColor: 'transparent', // remove sombra iOS
+                    elevation: 0, // remove sombra Android
+                },
+                headerTintColor: '#adb1f5', // azul clarinho
+                headerTitleStyle: {
+                    fontWeight: '700',
+                },
+                headerLeft: () => null, // remove seta voltar na tela principal
+            }}
+        >
             <Stack.Screen
                 name="HomePrincipal"
                 component={Home}
-                options={{
-                    title: 'Feed',
-                    headerLeft: () => null, // remove a seta de voltar
-                }}
+                options={{ title: 'Feed' }}
             />
             <Stack.Screen name="Comentarios" component={Comentarios} />
             <Stack.Screen name="Detalhes" component={Detalhes} />
@@ -42,17 +52,27 @@ function HomeStack() {
     );
 }
 
-//  Pilha da Pesquisa
+// Pilha da Pesquisa com header estilizado
 function PesquisaStack() {
     return (
-        <Stack.Navigator>
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#1a2144',
+                    shadowColor: 'transparent',
+                    elevation: 0,
+                },
+                headerTintColor: '#adb1f5',
+                headerTitleStyle: {
+                    fontWeight: '700',
+                },
+                headerLeft: () => null,
+            }}
+        >
             <Stack.Screen
                 name="PesquisaPrincipal"
                 component={Pesquisa}
-                options={{
-                    title: 'Pesquisar',
-                    headerLeft: () => null,
-                }}
+                options={{ title: 'Pesquisar' }}
             />
             <Stack.Screen name="Detalhes" component={Detalhes} />
             <Stack.Screen name="Comentarios" component={Comentarios} />
@@ -60,44 +80,55 @@ function PesquisaStack() {
     );
 }
 
-//  Pilha do Perfil
+// Pilha do Perfil com header estilizado
 function PerfilStack() {
     return (
-        <Stack.Navigator>
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#1a2144',
+                    shadowColor: 'transparent',
+                    elevation: 0,
+                },
+                headerTintColor: '#adb1f5',
+                headerTitleStyle: {
+                    fontWeight: '700',
+                },
+                headerLeft: () => null,
+            }}
+        >
             <Stack.Screen
                 name="PerfilPrincipal"
                 component={Perfil}
-                options={{
-                    title: 'Meu Perfil',
-                    headerLeft: () => null,
-                }}
+                options={{ title: 'Meu Perfil' }}
             />
             <Stack.Screen
                 name="EditarPerfil"
                 component={EditarPerfil}
-                options={{
-                    title: 'Editar Perfil',
-                    headerLeft: () => null,
-                }}
+                options={{ title: 'Editar Perfil' }}
             />
             <Stack.Screen
                 name="SelecionarAvatar"
                 component={SelecionarAvatar}
-                options={{
-                    title: 'Escolher Avatar',
-                    headerLeft: () => null,
-                }}
+                options={{ title: 'Escolher Avatar' }}
             />
         </Stack.Navigator>
     );
 }
 
-//  Abas principais
+// Abas principais com estilo do rodapé e ícones
 function MainTabs() {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
                 headerShown: false,
+                tabBarStyle: {
+                    backgroundColor: '#1a2144', // fundo azul escuro do rodapé
+                    borderTopWidth: 0,
+                    elevation: 10,
+                },
+                tabBarActiveTintColor: '#adb1f5', // azul clarinho para ícone ativo
+                tabBarInactiveTintColor: 'white', // branco para ícone inativo
                 tabBarIcon: ({ color, size }) => {
                     let icon;
                     if (route.name === 'Home') icon = 'home';
@@ -114,7 +145,7 @@ function MainTabs() {
     );
 }
 
-//  Navegação principal
+// Navegação principal
 export default function Routes() {
     return (
         <NavigationContainer>

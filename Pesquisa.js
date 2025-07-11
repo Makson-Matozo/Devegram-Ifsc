@@ -15,6 +15,7 @@ import {
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import { Feather } from '@expo/vector-icons';
 
 export default function Pesquisa() {
     const [query, setQuery] = useState('');
@@ -46,7 +47,7 @@ export default function Pesquisa() {
             setFotos(res.data.photos);
 
             setHistorico((prev) => {
-                const novoHist = prev.filter(item => item !== termo);
+                const novoHist = prev.filter((item) => item !== termo);
                 return [termo, ...novoHist].slice(0, 5);
             });
         } catch (error) {
@@ -66,7 +67,7 @@ export default function Pesquisa() {
     const renderItem = ({ item }) => (
         <TouchableOpacity
             onPress={() => navigation.navigate('Detalhes', { foto: item })}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
             style={styles.card}
         >
             <Image source={{ uri: item.src.medium }} style={styles.image} />
@@ -75,11 +76,12 @@ export default function Pesquisa() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="auto" />
+            <StatusBar style="light" />
 
             <View style={styles.searchRow}>
                 <TextInput
                     placeholder="Buscar imagens..."
+                    placeholderTextColor="#99aaff"
                     value={query}
                     onChangeText={setQuery}
                     style={styles.input}
@@ -93,17 +95,14 @@ export default function Pesquisa() {
                     onPress={() => buscarFotos()}
                     disabled={loading || !query.trim()}
                 >
-                    <Text style={styles.buttonText}>
-                        {loading ? 'Buscando...' : 'Buscar'}
-                    </Text>
+                    <Text style={styles.buttonText}>{loading ? 'Buscando...' : 'Buscar'}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.clearButton} onPress={limparBusca}>
-                    <Text style={styles.clearButtonText}>❌</Text>
+                    <Feather name="x" size={22} color="#99aaff" />
                 </TouchableOpacity>
             </View>
 
-            {/* Histórico de buscas */}
             {historico.length > 0 && (
                 <View style={styles.historicoContainer}>
                     <Text style={styles.historicoTitulo}>🔍 Pesquisas recentes:</Text>
@@ -121,11 +120,10 @@ export default function Pesquisa() {
                 </View>
             )}
 
-            {/* Mensagens de erro ou carregamento */}
             {errorMsg ? (
                 <Text style={styles.errorText}>{errorMsg}</Text>
             ) : loading ? (
-                <ActivityIndicator size="large" style={{ marginTop: 20 }} />
+                <ActivityIndicator size="large" style={{ marginTop: 20 }} color="#6699ff" />
             ) : (
                 <FlatList
                     data={fotos}
@@ -137,7 +135,7 @@ export default function Pesquisa() {
                     ListEmptyComponent={
                         !loading && (
                             <Text style={styles.emptyText}>
-                                Comece digitando algo e toque em buscar para ver imagens.
+                                Comece digitando algo e toque em "Buscar" para ver imagens.
                             </Text>
                         )
                     }
@@ -148,80 +146,96 @@ export default function Pesquisa() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 15, backgroundColor: '#fff' },
+    container: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#0b1220', // preto azulado escuro
+    },
     searchRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 12,
     },
     input: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        height: 40,
-        marginRight: 8,
+        backgroundColor: '#122a54', // azul escuro
+        borderRadius: 10,
+        paddingHorizontal: 14,
+        height: 46,
+        fontSize: 16,
+        color: '#cbd6f7', // azul claro para texto
     },
     button: {
-        backgroundColor: '#007AFF',
-        paddingHorizontal: 15,
+        backgroundColor: '#3b5bfd', // azul vibrante
+        paddingHorizontal: 16,
+        marginLeft: 8,
+        height: 46,
         justifyContent: 'center',
-        borderRadius: 8,
-        height: 40,
+        borderRadius: 10,
     },
     buttonDisabled: {
-        backgroundColor: '#a1cafc',
+        backgroundColor: '#6379cc', // azul apagado
     },
     buttonText: {
-        color: '#fff',
-        fontWeight: 'bold',
+        color: '#e6e9ff', // quase branco azulado
+        fontWeight: '700',
+        fontSize: 15,
     },
     clearButton: {
         marginLeft: 8,
-        paddingHorizontal: 8,
-    },
-    clearButtonText: {
-        fontSize: 20,
-    },
-    card: {
-        flex: 1,
-        margin: 5,
-        height: 150,
-        borderRadius: 8,
-        overflow: 'hidden',
-    },
-    image: {
-        width: '100%',
-        height: '100%',
-    },
-    errorText: {
-        color: 'red',
-        textAlign: 'center',
-        marginTop: 10,
-    },
-    emptyText: {
-        textAlign: 'center',
-        color: '#666',
-        fontSize: 16,
-        marginTop: 50,
+        padding: 6,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     historicoContainer: {
-        marginBottom: 10,
+        marginBottom: 12,
     },
     historicoTitulo: {
-        fontWeight: 'bold',
-        marginBottom: 5,
+        fontWeight: '700',
+        fontSize: 16,
+        marginBottom: 6,
+        color: '#a3b0ff',
     },
     historicoItem: {
-        backgroundColor: '#f1f1f1',
+        backgroundColor: '#1d2d7a',
         borderRadius: 20,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
+        paddingHorizontal: 14,
+        paddingVertical: 7,
         marginRight: 8,
     },
     historicoTexto: {
         fontSize: 14,
-        color: '#333',
+        color: '#d0dbff',
+    },
+    card: {
+        flex: 1,
+        margin: 6,
+        height: 160,
+        borderRadius: 14,
+        overflow: 'hidden',
+        backgroundColor: '#122a54',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOpacity: 0.4,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 5,
+    },
+    image: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+    },
+    errorText: {
+        color: '#ff6b6b',
+        textAlign: 'center',
+        marginTop: 20,
+        fontWeight: '700',
+    },
+    emptyText: {
+        textAlign: 'center',
+        color: '#7f8aff',
+        fontSize: 16,
+        marginTop: 60,
+        paddingHorizontal: 20,
     },
 });

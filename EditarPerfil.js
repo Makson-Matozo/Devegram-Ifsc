@@ -1,11 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-    View, Text, TextInput, StyleSheet, TouchableOpacity,
-    Alert, ScrollView, Image,
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    TouchableOpacity,
+    Alert,
+    ScrollView,
+    Image,
+    ImageBackground,
 } from 'react-native';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { auth, db } from './Firebase';
 import { doc, getDocFromServer, setDoc } from 'firebase/firestore';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function EditarPerfil() {
     const navigation = useNavigation();
@@ -15,14 +23,29 @@ export default function EditarPerfil() {
     const [descricao, setDescricao] = useState('');
     const [dataNascimento, setDataNascimento] = useState('');
     const [avatar, setAvatar] = useState(null);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
-    // 🔄 Carrega os dados do perfil direto do servidor Firebase
-    const carregarDados = async () => {
+    const parseDate = (str) => {
+        if (!str) return new Date();
+        const parts = str.split('/');
+        if (parts.length !== 3) return new Date();
+        const [day, month, year] = parts;
+        return new Date(year, month - 1, day);
+    };
+
+    const formatDate = (date) => {
+        if (!date) return '';
+        const day = ('0' + date.getDate()).slice(-2);
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    async function carregarDados() {
         const user = auth.currentUser;
         if (!user) return;
 
         const ref = doc(db, 'usuarios', user.uid);
-
         try {
             const snap = await getDocFromServer(ref);
             if (snap.exists()) {
@@ -35,27 +58,28 @@ export default function EditarPerfil() {
         } catch (error) {
             console.log('Erro ao buscar dados:', error);
         }
-    };
+    }
 
-    //  Atualiza os dados sempre que a tela for focada
-    useFocusEffect(useCallback(() => {
-        carregarDados();
-    }, []));
 
-    //  Atualiza o avatar se veio da tela anterior
+    useFocusEffect(
+        useCallback(() => {
+            carregarDados();
+        }, [])
+    );
+
     useEffect(() => {
-        if (route.params?.avatarSelecionado) {
+        if (route.params?.avatarSelecionado && route.params.avatarSelecionado !== avatar) {
             setAvatar(route.params.avatarSelecionado);
-            navigation.setParams({ avatarSelecionado: undefined });
+            setTimeout(() => {
+                navigation.setParams({ avatarSelecionado: undefined });
+            }, 100);
         }
     }, [route.params?.avatarSelecionado]);
 
-    //  Salva alterações no Firestore
     const salvarAlteracao = async () => {
         const user = auth.currentUser;
         if (!user) return;
 
-        //  Valida a data de nascimento se preenchida
         if (dataNascimento.trim() && !/^\d{2}\/\d{2}\/\d{4}$/.test(dataNascimento.trim())) {
             Alert.alert('Data inválida', 'Use o formato dd/mm/aaaa.');
             return;
@@ -81,57 +105,97 @@ export default function EditarPerfil() {
         }
     };
 
+    const onChangeDate = (event, selectedDate) => {
+        setShowDatePicker(false);
+        if (selectedDate) {
+            setDataNascimento(formatDate(selectedDate));
+        }
+    };
+
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {avatar && <Image source={{ uri: avatar }} style={styles.avatarPreview} />}
-
-            <Text style={styles.label}>Apelido:</Text>
-            <TextInput
-                style={styles.input}
-                value={username}
-                onChangeText={setUsername}
-                placeholder="Digite seu nome"
-            />
-
-            <Text style={styles.label}>Descrição:</Text>
-            <TextInput
-                style={[styles.input, { height: 80 }]}
-                value={descricao}
-                onChangeText={setDescricao}
-                placeholder="Sobre você"
-                multiline
-            />
-
-            <Text style={styles.label}>Data de Nascimento:</Text>
-            <TextInput
-                style={styles.input}
-                value={dataNascimento}
-                onChangeText={(text) =>
-                    setDataNascimento(text.replace(/[^0-9/]/g, ''))
-                }
-                placeholder="dd/mm/aaaa"
-                keyboardType="numeric"
-            />
-
+        <ImageBackground
+            source={require('./assets/bg-perfil.jpg')}
+            style={styles.background}
+            resizeMode="cover"
+            blurRadius={2}
+        >
+            {/* Botão Voltar */}
             <TouchableOpacity
-                style={styles.botaoAvatar}
-                onPress={() => navigation.navigate('SelecionarAvatar')}
+                style={styles.botaoVoltar}
+                onPress={() => navigation.goBack()}
+                activeOpacity={0.7}
             >
-                <Text style={styles.botaoTexto}>Editar Foto de Perfil</Text>
+                <Text style={styles.textoVoltar}>← Voltar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.botao} onPress={salvarAlteracao}>
-                <Text style={styles.botaoTexto}>Salvar</Text>
-            </TouchableOpacity>
-        </ScrollView>
+            <ScrollView contentContainerStyle={styles.container}>
+                {avatar && <Image source={{ uri: avatar }} style={styles.avatarPreview} />}
+
+                <Text style={styles.label}>Apelido:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={username}
+                    onChangeText={setUsername}
+                    placeholder="Digite seu nome"
+                    placeholderTextColor="#888"
+                />
+
+                <Text style={styles.label}>Descrição:</Text>
+                <TextInput
+                    style={[styles.input, { height: 80 }]}
+                    value={descricao}
+                    onChangeText={setDescricao}
+                    placeholder="Sobre você"
+                    placeholderTextColor="#888"
+                    multiline
+                />
+
+                <Text style={styles.label}>Data de Nascimento:</Text>
+                <TouchableOpacity onPress={() => setShowDatePicker(true)} activeOpacity={0.7}>
+                    <TextInput
+                        style={styles.input}
+                        value={dataNascimento}
+                        placeholder="dd/mm/aaaa"
+                        placeholderTextColor="#888"
+                        editable={false}
+                        pointerEvents="none"
+                    />
+                </TouchableOpacity>
+
+                {showDatePicker && (
+                    <DateTimePicker
+                        value={parseDate(dataNascimento)}
+                        mode="date"
+                        display="calendar"
+                        onChange={onChangeDate}
+                        maximumDate={new Date()}
+                    />
+                )}
+
+                <TouchableOpacity
+                    style={styles.botaoAvatar}
+                    onPress={() => navigation.navigate('SelecionarAvatar')}
+                >
+                    <Text style={styles.botaoTexto}>Editar Foto de Perfil</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.botao} onPress={salvarAlteracao}>
+                    <Text style={styles.botaoTexto}>Salvar</Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+    },
     container: {
         padding: 20,
         paddingBottom: 40,
-        backgroundColor: '#fff',
+        alignItems: 'stretch',
+        backgroundColor: 'rgba(0,0,0,0.7)',
     },
     avatarPreview: {
         width: 120,
@@ -139,26 +203,38 @@ const styles = StyleSheet.create({
         borderRadius: 60,
         alignSelf: 'center',
         marginBottom: 20,
+        borderWidth: 2,
+        borderColor: '#00BFFF',
+        backgroundColor: '#111',
     },
     label: {
-        fontSize: 18,
-        marginBottom: 5,
+        fontSize: 16,
+        color: '#00BFFF',
+        fontWeight: 'bold',
         marginTop: 15,
+        marginBottom: 6,
     },
     input: {
-        width: '100%',
         height: 50,
         borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        paddingHorizontal: 10,
+        borderColor: '#00BFFF',
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        color: '#fff',
+        fontSize: 15,
+        backgroundColor: '#1a1a1a',
     },
     botao: {
-        backgroundColor: '#28a745',
+        backgroundColor: '#00BFFF',
         marginTop: 20,
         paddingVertical: 12,
         alignItems: 'center',
         borderRadius: 10,
+        shadowColor: '#00BFFF',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 6,
+        elevation: 4,
     },
     botaoAvatar: {
         backgroundColor: '#6f42c1',
@@ -166,10 +242,36 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         alignItems: 'center',
         borderRadius: 10,
+        shadowColor: '#6f42c1',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 6,
+        elevation: 4,
     },
     botaoTexto: {
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+
+    botaoVoltar: {
+        position: 'absolute',
+        top: 40,
+        left: 20,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        paddingVertical: 8,
+        paddingHorizontal: 14,
+        borderRadius: 20,
+        zIndex: 10,
+        shadowColor: '#00BFFF',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    textoVoltar: {
+        color: '#00BFFF',
+        fontWeight: '700',
+        fontSize: 16,
     },
 });

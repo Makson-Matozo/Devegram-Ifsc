@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, Alert, TouchableOpacity } from 'react-native';
+import {
+    View,
+    TextInput,
+    Text,
+    Alert,
+    TouchableOpacity,
+    Image
+} from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './Firebase';
-import styles from './estilo/estiloLogin'; // Certifique-se que esse estilo existe
+import styles from './estilo/estiloLogin'; // Estilo atualizado com tema Devil May Cry
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
@@ -26,11 +33,17 @@ export default function LoginScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
+            <Image
+                source={require('./assets/devilgrunt_logo.png')}
+                style={styles.logo}
+            />
+
             <Text style={styles.titulo}>LOGIN</Text>
 
             <TextInput
                 style={styles.input}
                 placeholder="E-mail"
+                placeholderTextColor="#aaa"
                 onChangeText={setEmail}
                 value={email}
                 keyboardType="email-address"
@@ -40,6 +53,7 @@ export default function LoginScreen({ navigation }) {
             <TextInput
                 style={styles.input}
                 placeholder="Senha"
+                placeholderTextColor="#aaa"
                 onChangeText={setSenha}
                 value={senha}
                 secureTextEntry

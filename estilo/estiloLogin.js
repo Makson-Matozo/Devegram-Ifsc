@@ -1,78 +1,98 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 export default StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
-        justifyContent: 'flex-start',
+        backgroundColor: '#0a0a0a', // preto mais profundo
+        justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
     },
+
+    innerContainer: {
+        width: '100%',
+        maxWidth: 400,
+        alignItems: 'center',
+    },
+
+    logo: {
+        width: 220,
+        height: 220,
+        resizeMode: 'contain',
+        marginBottom: 10,
+    },
+
     titulo: {
-        color: "black",
-        fontSize: 24,
+        color: '#00BFFF',
+        fontSize: 32,
         fontWeight: 'bold',
-        marginBottom: 30,
+        marginBottom: 25,
+        fontFamily: 'monospace',
+        textShadowColor: '#003366',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 6,
+        textAlign: 'center',
     },
-    Welcome: {
-        color: "black",
-        fontSize: 19,
-        fontWeight: 'bold',
-        marginBottom: 30,
-    },
+
     input: {
         width: '100%',
-        height: 45,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        marginBottom: 10,
-        backgroundColor: '#fff',
+        height: 50,
+        borderWidth: 1.5,
+        borderColor: '#00BFFF',
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        marginBottom: 15,
+        backgroundColor: '#1a1a1a',
+        color: '#fff',
+        fontSize: 16,
+        shadowColor: '#00BFFF',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
     },
+
     linkEsqueceu: {
-        color: '#4169e1',
+        color: '#00BFFF',
         alignSelf: 'flex-end',
-        marginBottom: 20,
+        marginBottom: 25,
+        textDecorationLine: 'underline',
+        fontSize: 14,
     },
+
     botao: {
         width: '100%',
-        height: 45,
-        backgroundColor: '#2d3d4f',
-        borderRadius: 5,
+        height: 50,
+        backgroundColor: '#00BFFF',
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
+        elevation: 8,
+        shadowColor: '#00BFFF',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.6,
+        shadowRadius: 5,
     },
-    botaoSair: {
-        width: '100%',
-        height: 45,
-        backgroundColor: '#FF0000',
-        borderRadius: 5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
+
     botaoTexto: {
         color: '#fff',
         fontWeight: 'bold',
+        fontSize: 18,
+        letterSpacing: 1,
     },
+
     registroTexto: {
-        color: 'black',
+        color: '#bbb',
+        marginTop: 10,
+        fontSize: 14,
     },
+
     linkRegistro: {
-        color: '#4169e1',
-    },
-    card: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 10
-    },
-    usuario: {
+        color: '#00BFFF',
         fontWeight: 'bold',
-        fontSize: 16,
-        marginBottom: 5
-    }
+        textDecorationLine: 'underline',
+        fontSize: 15,
+    },
 });
