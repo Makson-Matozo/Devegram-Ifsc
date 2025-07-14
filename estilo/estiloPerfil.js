@@ -1,0 +1,90 @@
+// estilo/estiloPerfil.js
+import { StyleSheet } from 'react-native';
+
+export default StyleSheet.create({
+    background: {
+        flex: 1,
+    },
+    container: {
+        padding: 24,
+        alignItems: 'center',
+        flexGrow: 1,
+        justifyContent: 'center',
+    },
+    card: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        borderRadius: 16,
+        padding: 20,
+        width: '100%',
+        maxWidth: 400,
+        alignItems: 'center',
+    },
+    avatar: {
+        width: 130,
+        height: 130,
+        borderRadius: 65,
+        marginBottom: 20,
+        borderWidth: 2,
+        borderColor: '#00BFFF',
+        backgroundColor: '#111',
+    },
+    nome: {
+        fontSize: 24,
+        fontWeight: '700',
+        marginBottom: 6,
+        color: '#fff',
+        textAlign: 'center',
+        textShadowColor: '#00BFFF',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 4,
+    },
+    email: {
+        fontSize: 15,
+        color: '#bbb',
+        marginBottom: 18,
+        textAlign: 'center',
+    },
+    secao: {
+        width: '100%',
+        marginBottom: 16,
+        paddingHorizontal: 10,
+    },
+    label: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#00BFFF',
+        marginBottom: 4,
+    },
+    textoInfo: {
+        fontSize: 15,
+        color: '#eee',
+        lineHeight: 22,
+    },
+    botao: {
+        backgroundColor: '#00BFFF',
+        paddingVertical: 14,
+        borderRadius: 10,
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 12,
+        shadowColor: '#00BFFF',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.35,
+        shadowRadius: 10,
+        elevation: 6,
+    },
+    botaoTexto: {
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 16,
+    },
+    iconeSair: {
+        position: 'absolute',
+        top: 40,
+        right: 20,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        padding: 10,
+        borderRadius: 30,
+        zIndex: 10,
+    },
+});

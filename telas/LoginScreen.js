@@ -8,12 +8,14 @@ import {
     Image
 } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from './Firebase';
-import styles from './estilo/estiloLogin'; // Estilo atualizado com tema Devil May Cry
+import { auth } from '../Firebase';
+import styles from '../estilo/estiloLogin';
+import { Feather } from '@expo/vector-icons'; // Ícone de olho
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [senhaVisivel, setSenhaVisivel] = useState(false); // Estado para mostrar/ocultar senha
 
     const handleLogin = () => {
         if (!email || !senha) {
@@ -24,7 +26,7 @@ export default function LoginScreen({ navigation }) {
         signInWithEmailAndPassword(auth, email, senha)
             .then((userCredential) => {
                 const user = userCredential.user;
-                navigation.navigate('Main'); // navega para o Tab.Navigator
+                navigation.navigate('Main');
             })
             .catch((error) => {
                 Alert.alert('Erro ao fazer login', error.message);
@@ -34,7 +36,7 @@ export default function LoginScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <Image
-                source={require('./assets/devilgrunt_logo.png')}
+                source={require('../assets/devilgrunt_logo.png')}
                 style={styles.logo}
             />
 
@@ -50,14 +52,26 @@ export default function LoginScreen({ navigation }) {
                 autoCapitalize="none"
             />
 
-            <TextInput
-                style={styles.input}
-                placeholder="Senha"
-                placeholderTextColor="#aaa"
-                onChangeText={setSenha}
-                value={senha}
-                secureTextEntry
-            />
+            <View style={styles.senhaContainer}>
+                <TextInput
+                    style={styles.inputSenha}
+                    placeholder="Senha"
+                    placeholderTextColor="#aaa"
+                    onChangeText={setSenha}
+                    value={senha}
+                    secureTextEntry={!senhaVisivel}
+                />
+                <TouchableOpacity
+                    style={styles.olhoIcone}
+                    onPress={() => setSenhaVisivel(!senhaVisivel)}
+                >
+                    <Feather
+                        name={senhaVisivel ? 'eye' : 'eye-off'}
+                        size={22}
+                        color="#aaa"
+                    />
+                </TouchableOpacity>
+            </View>
 
             <TouchableOpacity onPress={() => navigation.navigate('ResetSenha')}>
                 <Text style={styles.linkEsqueceu}>Esqueceu a senha?</Text>

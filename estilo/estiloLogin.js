@@ -95,4 +95,69 @@ export default StyleSheet.create({
         textDecorationLine: 'underline',
         fontSize: 15,
     },
+    senhaContainer: {
+        width: '100%',
+        position: 'relative',
+        marginBottom: 15,
+    },
+
+    inputSenha: {
+        width: '100%',
+        height: 50,
+        borderWidth: 1.5,
+        borderColor: '#00BFFF',
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        backgroundColor: '#1a1a1a',
+        color: '#fff',
+        fontSize: 16,
+        paddingRight: 45, // espaço pro olho
+        shadowColor: '#00BFFF',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
+    },
+
+    olhoIcone: {
+        position: 'absolute',
+        right: 15,
+        top: 14,
+        zIndex: 10,
+    },
+    background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+},
+
+senhaContainer: {
+    width: '100%',
+    position: 'relative',
+    marginBottom: 15,
+},
+
+inputSenha: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1.5,
+    borderColor: '#00BFFF',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#1a1a1a',
+    color: '#fff',
+    fontSize: 16,
+    paddingRight: 45,
+    shadowColor: '#00BFFF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+},
+
+olhoIcone: {
+    position: 'absolute',
+    right: 15,
+    top: 14,
+    zIndex: 10,
+},
+
 });

@@ -5,21 +5,21 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 
 // Telas principais
-import Home from './Home';
-import Comentarios from './Comentarios';
-import Perfil from './Perfil';
-import Detalhes from './Detalhes';
-import Pesquisa from './Pesquisa';
-import EditarPerfil from './EditarPerfil';
-import SelecionarAvatar from './SelecionarAvatar';
+import Home from './telas/Home';
+import Comentarios from './telas/Comentarios';
+import Perfil from './telas/Perfil';
+import Detalhes from './telas/Detalhes';
+import Pesquisa from './telas/Pesquisa';
+import EditarPerfil from './telas/EditarPerfil';
+import SelecionarAvatar from './telas/SelecionarAvatar';
 
 // Telas de autenticação
-import LoginScreen from './LoginScreen';
-import SignUpScreen from './SignUpScreen';
-import ResetSenha from './ResetSenha';
+import LoginScreen from './telas/LoginScreen';
+import SignUpScreen from './telas/SignUpScreen';
+import ResetSenha from './telas/ResetSenha';
 
 // Tela SpaceScreen
-import SpaceScreen from './SpaceScreen';
+import SpaceScreen from './telas/SpaceScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

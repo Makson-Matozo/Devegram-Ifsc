@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import {
     View,
     Text,
-    StyleSheet,
     TouchableOpacity,
     ScrollView,
     Image,
@@ -10,10 +9,12 @@ import {
     ImageBackground,
 } from 'react-native';
 import { signOut } from 'firebase/auth';
-import { auth, db } from './Firebase';
+import { auth, db } from '../Firebase';
 import { doc, getDocFromServer } from 'firebase/firestore';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { Feather } from '@expo/vector-icons'; // Ícone de logout
+import { Feather } from '@expo/vector-icons';
+import styles from '../estilo/estiloPerfil';
+
 
 export default function Perfil() {
     const navigation = useNavigation();
@@ -23,12 +24,17 @@ export default function Perfil() {
         email: '',
         descricao: '',
         dataNascimento: '',
-        avatar: null,
+        avatar: null,  // pode ser URL ou caminho inválido
     });
+
+    // Estado para controlar se houve erro no carregamento da imagem avatar
+    const [avatarErro, setAvatarErro] = useState(false);
 
     const carregarPerfil = useCallback(async () => {
         const user = auth.currentUser;
         if (!user) return;
+
+        setAvatarErro(false); // resetar erro de avatar antes de carregar
 
         try {
             const docRef = doc(db, 'usuarios', user.uid);
@@ -85,7 +91,7 @@ export default function Perfil() {
 
     return (
         <ImageBackground
-            source={require('./assets/bg.jpg')} // fundo azul e preto estiloso
+            source={require('../assets/bg.jpg')}
             style={styles.background}
             resizeMode="cover"
             blurRadius={2}
@@ -102,11 +108,14 @@ export default function Perfil() {
                 <View style={styles.card}>
                     <Image
                         source={
-                            perfil.avatar
+                            // Se avatarErro for true, usar a imagem local user.png
+                            !avatarErro && perfil.avatar && perfil.avatar.trim() !== ''
                                 ? { uri: perfil.avatar }
-                                : require('./assets/user.png')
+                                : require('../assets/user.png')
                         }
                         style={styles.avatar}
+                        onError={() => setAvatarErro(true)} // Se imagem falhar, muda o estado para true
+                        resizeMode="cover"
                     />
 
                     <Text style={styles.nome}>
@@ -137,91 +146,3 @@ export default function Perfil() {
         </ImageBackground>
     );
 }
-
-const styles = StyleSheet.create({
-    background: {
-        flex: 1,
-    },
-    container: {
-        padding: 24,
-        alignItems: 'center',
-        flexGrow: 1,
-        justifyContent: 'center',
-    },
-    card: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        borderRadius: 16,
-        padding: 20,
-        width: '100%',
-        maxWidth: 400,
-        alignItems: 'center',
-    },
-    avatar: {
-        width: 130,
-        height: 130,
-        borderRadius: 65,
-        marginBottom: 20,
-        borderWidth: 2,
-        borderColor: '#00BFFF',
-        backgroundColor: '#111',
-    },
-    nome: {
-        fontSize: 24,
-        fontWeight: '700',
-        marginBottom: 6,
-        color: '#fff',
-        textAlign: 'center',
-        textShadowColor: '#00BFFF',
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 4,
-    },
-    email: {
-        fontSize: 15,
-        color: '#bbb',
-        marginBottom: 18,
-        textAlign: 'center',
-    },
-    secao: {
-        width: '100%',
-        marginBottom: 16,
-        paddingHorizontal: 10,
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#00BFFF',
-        marginBottom: 4,
-    },
-    textoInfo: {
-        fontSize: 15,
-        color: '#eee',
-        lineHeight: 22,
-    },
-    botao: {
-        backgroundColor: '#00BFFF',
-        paddingVertical: 14,
-        borderRadius: 10,
-        width: '100%',
-        alignItems: 'center',
-        marginBottom: 12,
-        shadowColor: '#00BFFF',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.35,
-        shadowRadius: 10,
-        elevation: 6,
-    },
-    botaoTexto: {
-        color: '#fff',
-        fontWeight: '700',
-        fontSize: 16,
-    },
-    iconeSair: {
-        position: 'absolute',
-        top: 40,
-        right: 20,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        padding: 10,
-        borderRadius: 30,
-        zIndex: 10,
-    },
-});
