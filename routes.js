@@ -44,7 +44,7 @@ function HomeStack() {
             <Stack.Screen
                 name="HomePrincipal"
                 component={Home}
-                options={{ title: 'Feed' }}
+                options={{ title: 'Inicio' }}
             />
             <Stack.Screen name="Comentarios" component={Comentarios} />
             <Stack.Screen name="Detalhes" component={Detalhes} />

@@ -28,50 +28,18 @@ export default StyleSheet.create({
         color: '#bbb',
         fontStyle: 'italic',
     },
-    actions: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginBottom: 30,
-    },
-    button: {
+
+    // Estilos do botão de voltar
+    backButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 6,
-        paddingHorizontal: 14,
-        borderRadius: 14,
-        backgroundColor: '#1f1f1f',
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        marginBottom: 10,
     },
-    buttonText: {
-        marginLeft: 10,
+    backButtonText: {
         fontSize: 16,
-        color: '#ccc',
-        fontWeight: '600',
-    },
-    commentsSection: {
-        borderTopWidth: 1,
-        borderTopColor: '#333',
-        paddingTop: 16,
-    },
-    commentsTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        marginBottom: 12,
-        color: '#eee',
-    },
-    noComments: {
-        fontStyle: 'italic',
-        color: '#777',
-    },
-    comentarioContainer: {
-        marginBottom: 14,
-    },
-    comentarioAutor: {
-        fontWeight: '700',
-        color: '#ddd',
-        marginBottom: 2,
-    },
-    comentarioTexto: {
-        color: '#bbb',
-        lineHeight: 20,
+        color: '#f0f0f0',
+        marginLeft: 8,
     },
 });

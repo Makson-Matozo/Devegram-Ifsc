@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     View,
-    FlatList,
+    ScrollView,
     Image,
     TouchableOpacity,
     Text,
@@ -11,7 +11,6 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import styles from '../estilo/estiloHome';
-
 
 import { db, auth } from '../Firebase';
 import {
@@ -35,9 +34,6 @@ export default function Home() {
     const user = auth.currentUser;
 
     useEffect(() => {
-        let stopCurtidas = null;
-        let stopComentarios = null;
-
         async function carregarFotos() {
             try {
                 const res = await axios.get('https://api.pexels.com/v1/curated?per_page=40', {
@@ -48,9 +44,8 @@ export default function Home() {
 
                 const fotosCarregadas = res.data.photos;
                 setFotos(fotosCarregadas);
-
-                stopCurtidas = escutarCurtidasTempoReal(fotosCarregadas);
-                stopComentarios = escutarComentariosTempoReal(fotosCarregadas);
+                escutarCurtidasTempoReal(fotosCarregadas);
+                escutarComentariosTempoReal(fotosCarregadas);
             } catch (error) {
                 console.log('Erro ao carregar fotos:', error);
             } finally {
@@ -59,11 +54,6 @@ export default function Home() {
         }
 
         carregarFotos();
-
-        return () => {
-            if (stopCurtidas) stopCurtidas();
-            if (stopComentarios) stopComentarios();
-        };
     }, []);
 
     useEffect(() => {
@@ -87,7 +77,6 @@ export default function Home() {
     const escutarCurtidasTempoReal = (fotos) => {
         const unsubscribe = onSnapshot(collection(db, 'userLikes'), (snapshot) => {
             const contagem = {};
-
             for (const foto of fotos) {
                 let total = 0;
 
@@ -118,8 +107,6 @@ export default function Home() {
                 }));
             });
         });
-
-        return () => unsubscribes.forEach((unsub) => unsub());
     };
 
     const alternarCurtida = async (fotoId) => {
@@ -143,50 +130,6 @@ export default function Home() {
         }
     };
 
-    const renderItem = ({ item }) => {
-        const estaCurtido = curtidasUsuario.includes(item.id);
-        const totalCurtidas = curtidasPorFoto[item.id] || 0;
-        const totalComentarios = comentariosPorFoto[item.id] || 0;
-
-        return (
-            <View style={styles.card}>
-                <TouchableOpacity onPress={() => navigation.navigate('Detalhes', { foto: item })}>
-                    <Image source={{ uri: item.src.medium }} style={styles.image} />
-                </TouchableOpacity>
-
-                <Text style={styles.photographer}>📸 {item.photographer}</Text>
-
-                <View style={styles.actions}>
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        style={styles.button}
-                        onPress={() => alternarCurtida(item.id)}
-                    >
-                        <FontAwesome
-                            name="heart"
-                            size={24}
-                            color={estaCurtido ? 'red' : '#fff'} 
-                        />
-                        <Text style={styles.buttonText}>
-                            {totalCurtidas} {totalCurtidas === 1 ? 'curtida' : 'curtidas'}
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        style={styles.button}
-                        onPress={() => navigation.navigate('Comentarios', { fotoId: item.id })}
-                    >
-                        <FontAwesome name="comment" size={24} color="#aaa" />
-                        <Text style={styles.buttonText}>
-                            {totalComentarios} comentário{totalComentarios === 1 ? '' : 's'}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        );
-    };
-
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
@@ -197,11 +140,50 @@ export default function Home() {
     }
 
     return (
-        <FlatList
-            data={fotos}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-            contentContainerStyle={styles.listContainer}
-        />
+        <ScrollView contentContainerStyle={styles.listContainer}>
+            {fotos.map((item) => {
+                const estaCurtido = curtidasUsuario.includes(item.id);
+                const totalCurtidas = curtidasPorFoto[item.id] || 0;
+                const totalComentarios = comentariosPorFoto[item.id] || 0;
+
+                return (
+                    <View key={item.id} style={styles.card}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Detalhes', { foto: item })}>
+                            <Image source={{ uri: item.src.medium }} style={styles.image} />
+                        </TouchableOpacity>
+
+                        <Text style={styles.photographer}>📸 {item.photographer}</Text>
+
+                        <View style={styles.actions}>
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                style={styles.button}
+                                onPress={() => alternarCurtida(item.id)}
+                            >
+                                <FontAwesome
+                                    name="heart"
+                                    size={24}
+                                    color={estaCurtido ? 'red' : '#fff'}
+                                />
+                                <Text style={styles.buttonText}>
+                                    {totalCurtidas} {totalCurtidas === 1 ? 'curtida' : 'curtidas'}
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                style={styles.button}
+                                onPress={() => navigation.navigate('Comentarios', { fotoId: item.id })}
+                            >
+                                <FontAwesome name="comment" size={24} color="#aaa" />
+                                <Text style={styles.buttonText}>
+                                    {totalComentarios} comentário{totalComentarios === 1 ? '' : 's'}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                );
+            })}
+        </ScrollView>
     );
 }

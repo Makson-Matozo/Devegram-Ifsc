@@ -26,21 +26,21 @@ export default function EditarPerfil() {
     const [avatar, setAvatar] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
 
-    const parseDate = (str) => {
+    function parseDate(str) {
         if (!str) return new Date();
         const parts = str.split('/');
         if (parts.length !== 3) return new Date();
         const [day, month, year] = parts;
         return new Date(year, month - 1, day);
-    };
+    }
 
-    const formatDate = (date) => {
+    function formatDate(date) {
         if (!date) return '';
         const day = ('0' + date.getDate()).slice(-2);
         const month = ('0' + (date.getMonth() + 1)).slice(-2);
         const year = date.getFullYear();
         return `${day}/${month}/${year}`;
-    };
+    }
 
     async function carregarDados() {
         const user = auth.currentUser;
@@ -76,7 +76,7 @@ export default function EditarPerfil() {
         }
     }, [route.params?.avatarSelecionado]);
 
-    const salvarAlteracao = async () => {
+    async function salvarAlteracao() {
         const user = auth.currentUser;
         if (!user) return;
 
@@ -105,21 +105,20 @@ export default function EditarPerfil() {
             console.error('Erro ao salvar perfil:', error);
             Alert.alert('Erro', 'Não foi possível salvar.');
         }
-    };
+    }
 
-    const onChangeDate = (event, selectedDate) => {
+    function onChangeDate(event, selectedDate) {
         setShowDatePicker(false);
         if (selectedDate) {
             setDataNascimento(formatDate(selectedDate));
         }
-    };
+    }
 
     return (
         <ImageBackground
             source={require('../assets/bg-perfil.jpg')}
             style={styles.background}
             resizeMode="cover"
-            blurRadius={2}
         >
             <TouchableOpacity
                 style={styles.botaoVoltar}

@@ -27,7 +27,6 @@ export default function Perfil() {
         avatar: null,  // pode ser URL ou caminho inválido
     });
 
-    // Estado para controlar se houve erro no carregamento da imagem avatar
     const [avatarErro, setAvatarErro] = useState(false);
 
     const carregarPerfil = useCallback(async () => {

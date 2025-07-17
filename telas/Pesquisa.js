@@ -33,7 +33,6 @@ export default function Pesquisa() {
 
         setLoading(true);
         setErrorMsg('');
-        Keyboard.dismiss();
 
         try {
             const res = await axios.get(
@@ -67,7 +66,9 @@ export default function Pesquisa() {
 
     const renderItem = ({ item }) => (
         <TouchableOpacity
-            onPress={() => navigation.navigate('Detalhes', { foto: item })}
+            onPress={() => {
+                navigation.navigate('Detalhes', { foto: item });
+            }}
             activeOpacity={0.85}
             style={styles.card}
         >
@@ -75,8 +76,9 @@ export default function Pesquisa() {
         </TouchableOpacity>
     );
 
+
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <StatusBar style="light" />
 
             <View style={styles.searchRow}>
@@ -142,6 +144,6 @@ export default function Pesquisa() {
                     }
                 />
             )}
-        </SafeAreaView>
+        </View>
     );
 }
